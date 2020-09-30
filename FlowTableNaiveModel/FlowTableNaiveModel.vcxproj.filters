@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\Common">
+      <UniqueIdentifier>{0da9fa9a-b6a9-47c0-9556-561b8c39cb6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Framework">
+      <UniqueIdentifier>{1313a0f0-4291-4f7b-8930-9a8d2899ebd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\HashTable">
+      <UniqueIdentifier>{d9848e1c-d2b4-474c-81d8-992f2dc358c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\View">
+      <UniqueIdentifier>{518a5c2a-972d-4411-b71a-7f61680acc63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Common">
+      <UniqueIdentifier>{71a5e1a6-4f1e-42b3-9df8-03b82bf54887}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Framework">
+      <UniqueIdentifier>{e8836e2a-d2bd-4b28-9990-4169162854f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\HashTable">
+      <UniqueIdentifier>{819c2829-e21d-47d9-b1e4-1887a63ff22b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\View">
+      <UniqueIdentifier>{543125a0-27c5-431c-af48-a9cd45cbd9e0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DCBF.h">
+      <Filter>头文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketLookup.h">
+      <Filter>头文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="HashTable.h">
+      <Filter>头文件\HashTable</Filter>
+    </ClInclude>
+    <ClInclude Include="HashListSCBF.h">
+      <Filter>头文件\HashTable</Filter>
+    </ClInclude>
+    <ClInclude Include="HashTableSCBF.h">
+      <Filter>头文件\HashTable</Filter>
+    </ClInclude>
+    <ClInclude Include="HashList.h">
+      <Filter>头文件\HashTable</Filter>
+    </ClInclude>
+    <ClInclude Include="HashFunctions.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="SCBF.h">
+      <Filter>头文件\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="uniform.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="FlowTableNaiveModel.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="FlowTableNaiveModelDlg.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件\View</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FlowTableNaiveModel.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="FlowTableNaiveModelDlg.cpp">
+      <Filter>源文件\View</Filter>
+    </ClCompile>
+    <ClCompile Include="HashFunctions.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="DCBF.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="SCBF.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketLookup.cpp">
+      <Filter>源文件\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="HashListSCBF.cpp">
+      <Filter>源文件\HashTable</Filter>
+    </ClCompile>
+    <ClCompile Include="HashList.cpp">
+      <Filter>源文件\HashTable</Filter>
+    </ClCompile>
+    <ClCompile Include="HashTable.cpp">
+      <Filter>源文件\HashTable</Filter>
+    </ClCompile>
+    <ClCompile Include="HashTableSCBF.cpp">
+      <Filter>源文件\HashTable</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FlowTableNaiveModel.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\FlowTableNaiveModel.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\FlowTableNaiveModel.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\Toolbar256.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
