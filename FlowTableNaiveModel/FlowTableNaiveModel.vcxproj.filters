@@ -37,6 +37,9 @@
     <Filter Include="源文件\View">
       <UniqueIdentifier>{543125a0-27c5-431c-af48-a9cd45cbd9e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\RBTree">
+      <UniqueIdentifier>{fef888a6-8ffc-4b4b-8719-8ce4c9dcfd4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DCBF.h">
@@ -84,6 +87,27 @@
     <ClInclude Include="resource.h">
       <Filter>头文件\View</Filter>
     </ClInclude>
+    <ClInclude Include="BinaryTree.h">
+      <Filter>头文件\RBTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BBSTree.h">
+      <Filter>头文件\RBTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BSTree.h">
+      <Filter>头文件\RBTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Comparator.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Equal.h">
+      <Filter>头文件\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RedBlackTree.h">
+      <Filter>头文件\RBTree</Filter>
+    </ClInclude>
+    <ClInclude Include="RBTreeHashTable.h">
+      <Filter>头文件\HashTable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FlowTableNaiveModel.cpp">
@@ -120,6 +144,9 @@
       <Filter>源文件\HashTable</Filter>
     </ClCompile>
     <ClCompile Include="HashTableSCBF.cpp">
+      <Filter>源文件\HashTable</Filter>
+    </ClCompile>
+    <ClCompile Include="RBTreeHashTable.cpp">
       <Filter>源文件\HashTable</Filter>
     </ClCompile>
   </ItemGroup>

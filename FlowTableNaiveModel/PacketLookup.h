@@ -4,6 +4,7 @@
 #include "HashTable.h"
 #include "SCBF.h"
 #include "DCBF.h"
+#include "RBTreeHashTable.h"
 
 #include <list>
 #include <fstream>
@@ -68,6 +69,8 @@ protected:
 	bool MaskProbeCBF(const Packet &);
 	bool MaskProbeSCBF(const Packet &);
 	bool MaskProbeDCBF(const Packet &);
+	bool MaskProbeRBTreeSCBF(const Packet &);
+	bool MaskProbeRBTree(const Packet&);
 
 	const FlowID CalcFlowID(UCHAR, const EndID &, const EndID &);
 	Flow*	NewFlow(const Packet &, const FlowID &);
@@ -79,13 +82,14 @@ protected:
 
 protected:
 	list<ifstream *> m_fileStream;		//TRACEÎÄ¼þÁ÷
-	SCBF * filter2017[MASK_NUM], * filter2019[MASK_NUM], * filterDCBF[MASK_NUM];
-	HashTable * m_tableNaive[MASK_NUM], * m_tableCBF[MASK_NUM],* m_tableSCBF[MASK_NUM],* m_tableDCBF[MASK_NUM];	
+	SCBF * filter2017[MASK_NUM], * filter2019[MASK_NUM], * filterDCBF[MASK_NUM], * filterRBTreeSCBF[MASK_NUM],* filterRBTree[MASK_NUM];
+	HashTable* m_tableNaive[MASK_NUM], * m_tableCBF[MASK_NUM], * m_tableSCBF[MASK_NUM], * m_tableDCBF[MASK_NUM];
+	RBTreeHashTable * m_tableRBTreeSCBF[MASK_NUM],* m_tableRBTree[MASK_NUM];
 
-	ULONG m_ulLookupNum,m_ulLookupLenNaive,m_ulLookupLenSCBF,m_ulLookupLenCBF, m_ulLookupLenDCBF;
-	ULONG m_ulProbeNumNaive, m_ulProbeNumSCBF, m_ulProbeNumCBF, m_ulProbeNumDCBF;
+	ULONG m_ulLookupNum,m_ulLookupLenNaive,m_ulLookupLenSCBF,m_ulLookupLenCBF, m_ulLookupLenDCBF,m_ulLookupLenRBTreeSCBF,m_ulLookupLenRBTree;
+	ULONG m_ulProbeNumNaive, m_ulProbeNumSCBF, m_ulProbeNumCBF, m_ulProbeNumDCBF,m_ulProbeNumRBTreeSCBF;
 
-	ULONG m_ulCBFFindNum, m_ulSCBFFindNum, m_ulDCBFFindNum;
-	ULONG m_ulCBFErrorNum,m_ulSCBFErrorNum, m_ulDCBFErrorNum;
+	ULONG m_ulCBFFindNum, m_ulSCBFFindNum, m_ulDCBFFindNum,m_ulRBTreeFindNum;
+	ULONG m_ulCBFErrorNum,m_ulSCBFErrorNum, m_ulDCBFErrorNum,m_ulRBTreeErrorNum;
 };
 

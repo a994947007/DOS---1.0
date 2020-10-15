@@ -183,7 +183,12 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BBSTree.h" />
+    <ClInclude Include="BinaryTree.h" />
+    <ClInclude Include="BSTree.h" />
+    <ClInclude Include="Comparator.h" />
     <ClInclude Include="DCBF.h" />
+    <ClInclude Include="Equal.h" />
     <ClInclude Include="FlowTableNaiveModel.h" />
     <ClInclude Include="FlowTableNaiveModelDlg.h" />
     <ClInclude Include="HashFunctions.h" />
@@ -193,6 +198,8 @@
     <ClInclude Include="HashTableSCBF.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="PacketLookup.h" />
+    <ClInclude Include="RBTreeHashTable.h" />
+    <ClInclude Include="RedBlackTree.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SCBF.h" />
     <ClInclude Include="stdafx.h" />
@@ -210,6 +217,7 @@
     <ClCompile Include="HashTableSCBF.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="PacketLookup.cpp" />
+    <ClCompile Include="RBTreeHashTable.cpp" />
     <ClCompile Include="SCBF.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

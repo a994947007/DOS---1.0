@@ -11,19 +11,25 @@ PacketLookup::PacketLookup(const UserConfig & info) :
 	m_ulProbeNumNaive(0),m_ulProbeNumCBF(0),m_ulProbeNumSCBF(0),
 	m_ulCBFErrorNum(0),m_ulCBFFindNum(0),
 	m_ulSCBFErrorNum(0),m_ulSCBFFindNum(0),
-	m_ulLookupLenDCBF(0), m_ulProbeNumDCBF(0), m_ulDCBFFindNum(0), m_ulDCBFErrorNum(0)
+	m_ulLookupLenDCBF(0), m_ulProbeNumDCBF(0), m_ulDCBFFindNum(0), m_ulDCBFErrorNum(0),
+	m_ulLookupLenRBTreeSCBF(0),m_ulProbeNumRBTreeSCBF(0),m_ulRBTreeFindNum(0),m_ulRBTreeErrorNum(0),
+	m_ulLookupLenRBTree(0)
 {
 	srand(unsigned(time(NULL)));
 
 	for (ULONG i = 0; i < MASK_NUM; i++) {
 		filter2017[i] = new SCBF(info.cbfCountersLen, ULONG_MAX);
 		filter2019[i] = new SCBF(info.scbfCountersLen, info.scbfInitCapacity);			//SCBF极限容量设置是一个优化指标
-		filterDCBF[i] = new DCBF(info.scbfCountersLen, info.scbfInitCapacity);			
+		filterDCBF[i] = new DCBF(info.scbfCountersLen, info.scbfInitCapacity);		
+		filterRBTreeSCBF[i] = new SCBF(info.scbfCountersLen, info.scbfInitCapacity);
+		filterRBTree[i] = new SCBF(info.scbfCountersLen, info.scbfInitCapacity);
 
 		m_tableNaive[i] = new HashTable(info.uiHashLen);
 		m_tableSCBF[i] = new HashTableSCBF(info.uiHashLen,filter2019[i]);
 		m_tableCBF[i] = new HashTableSCBF(info.uiHashLen,filter2017[i]);
 		m_tableDCBF[i] = new HashTableSCBF(info.uiHashLen, filterDCBF[i]);
+		m_tableRBTreeSCBF[i] = new RBTreeHashTable(info.uiHashLen, filterRBTreeSCBF[i]);
+		m_tableRBTree[i] = new RBTreeHashTable(info.uiHashLen, filterRBTree[i]);
 	}
 }
 
@@ -46,6 +52,14 @@ PacketLookup::~PacketLookup()
 			delete m_tableDCBF[i];
 			m_tableDCBF[i] = NULL;
 		}
+		if (m_tableRBTreeSCBF[i] != NULL) {
+			delete m_tableRBTreeSCBF[i];
+			m_tableRBTreeSCBF[i] = NULL;
+		}
+		if (m_tableRBTree[i] != NULL) {
+			delete m_tableRBTree[i];
+			m_tableRBTree[i] = NULL;
+		}
 		if (filter2017[i] != NULL) {
 			delete filter2017[i];
 			filter2017[i] = NULL;
@@ -57,6 +71,14 @@ PacketLookup::~PacketLookup()
 		if (filterDCBF[i] != NULL) {
 			delete filterDCBF[i];
 			filterDCBF[i] = NULL;
+		}
+		if (filterRBTreeSCBF[i] != NULL) { 
+			delete filterRBTreeSCBF[i];
+			filterRBTreeSCBF[i] = NULL;
+		}
+		if (filterRBTree[i] != NULL) {
+			delete filterRBTree[i];
+			filterRBTree[i] = NULL;
 		}
 	}
 }
@@ -92,6 +114,8 @@ bool PacketLookup::Initialize(const UserConfig & info) {
 			m_tableSCBF[i * MASK_NUM_ROOT + j]->SetMask(mask);
 			m_tableCBF[i * MASK_NUM_ROOT + j]->SetMask(mask);
 			m_tableDCBF[i * MASK_NUM_ROOT + j]->SetMask(mask);
+			m_tableRBTreeSCBF[i * MASK_NUM_ROOT + j]->setMask(mask);
+			m_tableRBTree[i * MASK_NUM_ROOT + j]->setMask(mask);
 		}
 	}
 	return true;
@@ -126,9 +150,11 @@ void PacketLookup::LookupTestProc(const UserConfig & info) {
 		m_ulLookupNum++;
 
 		MaskProbeNaive(pkt);
-		MaskProbeCBF(pkt);
+	//	MaskProbeCBF(pkt);
 		MaskProbeSCBF(pkt);
-		MaskProbeDCBF(pkt);
+		MaskProbeRBTreeSCBF(pkt);
+		MaskProbeRBTree(pkt);
+	//	MaskProbeDCBF(pkt);
 
 		if (bIsFirst) {
 			tLastWrite = tLastScan = pkt.time;
@@ -164,10 +190,19 @@ void PacketLookup::LookupTestProc(const UserConfig & info) {
 				m_ulCBFErrorNum = 0;
 				m_ulSCBFErrorNum = 0;
 
+				m_ulLookupLenRBTreeSCBF = 0;
+				m_ulProbeNumRBTreeSCBF = 0;
+				m_ulRBTreeFindNum = 0;
+				m_ulRBTreeErrorNum = 0;
+
+				m_ulLookupLenRBTree = 0;
+
+				/*
 				m_ulLookupLenDCBF = 0;
 				m_ulProbeNumDCBF = 0;
 				m_ulDCBFFindNum = 0;
 				m_ulDCBFErrorNum = 0;
+				*/
 			}
 
 			t = pkt.time - tLastScan;
@@ -176,8 +211,10 @@ void PacketLookup::LookupTestProc(const UserConfig & info) {
 				for (int i = 0; i < MASK_NUM; i++) {
 					m_tableNaive[i]->TimeoutScan(pkt.time);
 					m_tableSCBF[i]->TimeoutScan(pkt.time);
-					m_tableCBF[i]->TimeoutScan(pkt.time);
-					m_tableDCBF[i]->TimeoutScan(pkt.time);
+				//	m_tableCBF[i]->TimeoutScan(pkt.time);
+				//	m_tableDCBF[i]->TimeoutScan(pkt.time);
+					m_tableRBTreeSCBF[i]->timeoutScan(pkt.time);
+					m_tableRBTree[i]->timeoutScan(pkt.time);
 				}
 
 				tLastScan = pkt.time;
@@ -297,6 +334,7 @@ bool PacketLookup::MaskProbeSCBF(const Packet & pkt) {
 }
 
 bool PacketLookup::MaskProbeDCBF(const Packet& pkt) {
+	ASSERT(pkt.proto == PROTO_UDP || pkt.proto == PROTO_TCP);
 	const FlowID fid = CalcFlowID(pkt.proto, pkt.src, pkt.dst);
 
 	Flow* pNode = NULL;
@@ -331,6 +369,85 @@ bool PacketLookup::MaskProbeDCBF(const Packet& pkt) {
 	}
 	UpdateFlow(pNode, pkt, fid);
 	m_tableDCBF[index]->Insert(pNode);
+	return true;
+}
+
+bool PacketLookup::MaskProbeRBTreeSCBF(const Packet& pkt)
+{
+	ASSERT(pkt.proto == PROTO_UDP || pkt.proto == PROTO_TCP);
+	const FlowID fid = CalcFlowID(pkt.proto, pkt.src, pkt.dst);
+
+	Flow* pNode = NULL;
+	ULONG index = INDEX_INVALID;
+	for (ULONG i = 0; i < MASK_NUM; i++) {
+		ULONG bfLen = 0;
+		bool flag = filterRBTreeSCBF[i]->filter_query((FlowID)fid & m_tableRBTreeSCBF[i]->mask, bfLen);
+		m_ulRBTreeFindNum++;
+		m_ulLookupLenRBTreeSCBF += 1;
+		if (flag) {
+			m_ulLookupLenRBTreeSCBF += m_tableRBTreeSCBF[i]->find(fid, pNode);
+		}
+		if (NULL != pNode) {
+			index = i;
+			break;
+		}
+		else if (flag && pNode == NULL) {
+			m_ulRBTreeErrorNum++;
+		}
+		m_ulProbeNumRBTreeSCBF++;
+	}
+
+	if (pNode == NULL) {
+		pNode = NewSCFlow(pkt, fid);
+		for (ULONG i = 0; i < MASK_NUM; i++) {
+			if (pNode->mask == m_tableRBTreeSCBF[i]->mask) {
+				index = i;
+				break;
+			}
+		}
+		filterRBTreeSCBF[index]->filter_insert(*(SCFlow*)pNode);
+		m_tableRBTreeSCBF[index]->insert(pNode);
+	}
+	UpdateFlow(pNode, pkt, fid);
+	return true;
+}
+
+bool PacketLookup::MaskProbeRBTree(const Packet& pkt) {
+	ASSERT(pkt.proto == PROTO_UDP || pkt.proto == PROTO_TCP);
+	const FlowID fid = CalcFlowID(pkt.proto, pkt.src, pkt.dst);
+
+	Flow* pNode = NULL;
+	ULONG index = INDEX_INVALID;
+	for (ULONG i = 0; i < MASK_NUM; i++) {
+		ULONG bfLen = 0;
+		bool flag = filterRBTree[i]->filter_query((FlowID)fid & m_tableRBTree[i]->mask, bfLen);
+		//m_ulRBTreeFindNum++;
+		//m_ulLookupLenRBTreeSCBF += 1;
+		//if (flag) {
+			m_ulLookupLenRBTree += m_tableRBTree[i]->find(fid, pNode);
+		//}
+		if (NULL != pNode) {
+			index = i;
+			break;
+		}
+		//else if (flag && pNode == NULL) {
+		//	m_ulRBTreeErrorNum++;
+		//}
+		//m_ulProbeNumRBTreeSCBF++;
+	}
+
+	if (pNode == NULL) {
+		pNode = NewSCFlow(pkt, fid);
+		for (ULONG i = 0; i < MASK_NUM; i++) {
+			if (pNode->mask == m_tableRBTree[i]->mask) {
+				index = i;
+				break;
+			}
+		}
+		filterRBTree[index]->filter_insert(*(SCFlow*)pNode);
+		m_tableRBTree[index]->insert(pNode);
+	}
+	UpdateFlow(pNode, pkt, fid);
 	return true;
 }
 
@@ -429,11 +546,24 @@ bool PacketLookup::WriteResult(bool bIsOn, const UserConfig & info) {
 		double dProbeNumSCBF = (double)m_ulProbeNumSCBF / m_ulLookupNum;
 		double dSCBFError = (double)m_ulSCBFErrorNum / m_ulSCBFFindNum;
 
+		/*
 		double dAslDCBF = (double)m_ulLookupLenDCBF / m_ulLookupNum;
 		double dProbeNumDCBF = (double)m_ulProbeNumDCBF / m_ulLookupNum;
 		double dDCBFError = (double)m_ulDCBFErrorNum / m_ulDCBFFindNum;
+		*/
 		
-		fprintf(pfile, "%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\r\n", GetFlowNum(m_tableNaive), dAslNaive, dProbeNumNaive,dAslCBF,dProbeNumCBF, dCBFError,dAslSCBF,dProbeNumSCBF,dSCBFError,dAslDCBF,dProbeNumDCBF,dDCBFError);
+
+		double dAslRBTreeSCBF = (double)m_ulLookupLenRBTreeSCBF / m_ulLookupNum;
+		double dProbeNumRBTreeSCBF = (double)m_ulProbeNumRBTreeSCBF / m_ulLookupNum;
+		double dRBTreeSCBFError = (double)m_ulRBTreeErrorNum / m_ulRBTreeFindNum;
+
+		double dAslRBTree = (double)m_ulLookupLenRBTree / m_ulLookupNum;
+
+
+		//fprintf(pfile, "%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\r\n", GetFlowNum(m_tableNaive), dAslNaive, dProbeNumNaive,dAslCBF,dProbeNumCBF, dCBFError,dAslSCBF,dProbeNumSCBF,dSCBFError,dAslDCBF,dProbeNumDCBF,dDCBFError);
+		//fprintf(pfile, "%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", GetFlowNum(m_tableNaive), dAslNaive, dProbeNumNaive, dAslCBF, dProbeNumCBF, dCBFError, dAslSCBF, dProbeNumSCBF, dSCBFError);
+		//fprintf(pfile, "%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\r\n", GetFlowNum(m_tableNaive), dAslNaive, dProbeNumNaive, dAslCBF, dProbeNumCBF, dCBFError, dAslSCBF, dProbeNumSCBF, dSCBFError, dAslRBTreeSCBF, dProbeNumRBTreeSCBF, dRBTreeSCBFError);
+		fprintf(pfile, "%d\t%f\t%f\t%f\t%f\n", GetFlowNum(m_tableNaive), dAslNaive, dAslSCBF, dAslRBTree, dAslRBTreeSCBF );
 	}
 
 	if (pfile != NULL) {
