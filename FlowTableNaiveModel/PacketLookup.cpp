@@ -304,7 +304,7 @@ bool PacketLookup::MaskProbeSCBF(const Packet & pkt) {
 		ULONG bfLen = 0;
 		bool flag = filter2019[i]->filter_query((FlowID)fid & m_tableSCBF[i]->mask, bfLen);
 		m_ulSCBFFindNum++;
-		m_ulLookupLenSCBF+= 1;
+		m_ulLookupLenSCBF+= bfLen;
 		if (flag) {
 			m_ulLookupLenSCBF += m_tableSCBF[i]->Find(fid, pNode);
 		}
@@ -343,7 +343,7 @@ bool PacketLookup::MaskProbeDCBF(const Packet& pkt) {
 		ULONG bfLen = 0;
 		bool flag = filterDCBF[i]->filter_query((FlowID)fid & m_tableDCBF[i]->mask,bfLen);
 		m_ulDCBFFindNum++;
-		m_ulLookupLenDCBF += 1;
+		m_ulLookupLenDCBF += bfLen;
 		if (flag) {
 			m_ulLookupLenDCBF += m_tableDCBF[i]->Find(fid, pNode);
 		}
@@ -383,7 +383,7 @@ bool PacketLookup::MaskProbeRBTreeSCBF(const Packet& pkt)
 		ULONG bfLen = 0;
 		bool flag = filterRBTreeSCBF[i]->filter_query((FlowID)fid & m_tableRBTreeSCBF[i]->mask, bfLen);
 		m_ulRBTreeFindNum++;
-		m_ulLookupLenRBTreeSCBF += 1;
+		m_ulLookupLenRBTreeSCBF += bfLen;
 		if (flag) {
 			m_ulLookupLenRBTreeSCBF += m_tableRBTreeSCBF[i]->find(fid, pNode);
 		}
@@ -420,7 +420,7 @@ bool PacketLookup::MaskProbeRBTree(const Packet& pkt) {
 	ULONG index = INDEX_INVALID;
 	for (ULONG i = 0; i < MASK_NUM; i++) {
 		ULONG bfLen = 0;
-		bool flag = filterRBTree[i]->filter_query((FlowID)fid & m_tableRBTree[i]->mask, bfLen);
+		//bool flag = filterRBTree[i]->filter_query((FlowID)fid & m_tableRBTree[i]->mask, bfLen);
 		//m_ulRBTreeFindNum++;
 		//m_ulLookupLenRBTreeSCBF += 1;
 		//if (flag) {
@@ -444,7 +444,7 @@ bool PacketLookup::MaskProbeRBTree(const Packet& pkt) {
 				break;
 			}
 		}
-		filterRBTree[index]->filter_insert(*(SCFlow*)pNode);
+		//filterRBTree[index]->filter_insert(*(SCFlow*)pNode);
 		m_tableRBTree[index]->insert(pNode);
 	}
 	UpdateFlow(pNode, pkt, fid);
@@ -570,7 +570,6 @@ bool PacketLookup::WriteResult(bool bIsOn, const UserConfig & info) {
 		fclose(pfile);
 		pfile = NULL;
 	}
-
 	return true;
 }
 
